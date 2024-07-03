@@ -3,8 +3,7 @@ from typing import List
 from models.project import Project
 from models.user import User
 
-from .auth import get_current_user  # Import get_current_user function
-
+from .auth import get_current_user
 
 router = APIRouter()
 

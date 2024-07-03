@@ -1,0 +1,5 @@
+fastapi
+python-jose
+passlib
+sqlalchemy
+psycopg2-binary #sqlite if you want to use sqlite as your db
