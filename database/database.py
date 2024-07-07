@@ -3,7 +3,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"  # For SQLite
-SQLALCHEMY_DATABASE_URL = "postgresql://user:password@localhost/dbname"  # For PostgreSQL
+# SQLALCHEMY_DATABASE_URL = "postgresql://user:password@localhost/dbname"  # For PostgreSQL
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:abood@2009@localhost/NuvisionDB"  # For PostgreSQL
+
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
