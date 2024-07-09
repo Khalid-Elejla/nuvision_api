@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
-from models.project import Project
-from models.user import User
+from schemas.project import Project
+from schemas.user import User
 
 from .auth import get_current_user
 

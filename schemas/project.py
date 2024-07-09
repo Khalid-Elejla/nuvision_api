@@ -1,12 +1,19 @@
 from pydantic import BaseModel
-from typing import List, Optional
-from .location import Location
+from typing import Optional
+from datetime import datetime
 
-class Project(BaseModel):
-    id: int
+class ProjectBase(BaseModel):
     name: str
-    description: Optional[str]
-    locations: List[Location]
+    description: Optional[str] = None
+
+class ProjectCreate(ProjectBase):
+    pass
+
+class Project(ProjectBase):
+    id: int
+    user_id: int
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         orm_mode = True
