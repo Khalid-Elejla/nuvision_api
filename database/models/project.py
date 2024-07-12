@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from .database import Base
+from database.database import Base
 
 class Project(Base):
     __tablename__ = "projects"
@@ -13,4 +13,4 @@ class Project(Base):
     updated_at = Column(DateTime)
 
     user = relationship("User", back_populates="projects")
-    locations = relationship("Location", back_populates="project")
+    #locations = relationship("Location", back_populates="project")

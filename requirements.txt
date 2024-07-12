@@ -1,5 +1,7 @@
 fastapi
 python-jose
 passlib
+bcrypt
 sqlalchemy
 psycopg2-binary #sqlite if you want to use sqlite as your db
+python-dotenv

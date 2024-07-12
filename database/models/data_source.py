@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from .database import Base
+from database.database import Base
 
 class DataSource(Base):
     __tablename__ = "data_sources"

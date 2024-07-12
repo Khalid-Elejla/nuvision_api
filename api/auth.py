@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import datetime, timedelta
@@ -5,21 +6,27 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from typing import Optional
 from database.models.user import User
+from dotenv import load_dotenv
+
+
+# Load environment variables
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 router = APIRouter()
-
-# This should be stored securely in environment variables in production
-SECRET_KEY = "your-secret-key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Mock database for demonstration
 fake_users_db = {
     "user@example.com": {
         "username": "user@example.com",
-        "full_name": "User Example",
+        #"full_name": "User Example",
         "email": "user@example.com",
-        "hashed_password": "$2b$12$9faP0hND6MgwOah6z7rOFu6lTkGw2gY6xBLO0yRnFTbF1PYdxh42e",  # hashed version of "password"
+        "hashed_password": "$2b$12$rAPM7zUJBkgrdrPHQZGnsOEbSccuia9oMcWwS7PVk/0ks5tQS3I/2",  # hashed version of "password"
+        #"hashed_password": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",  # hashed version of "password"
+
     }
 }
 
@@ -27,7 +34,8 @@ fake_users_db = {
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # OAuth2PasswordBearer for token handling
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+#oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/login")
 
 # Function to verify password
 def verify_password(plain_password, hashed_password):
@@ -43,9 +51,9 @@ def get_user(email: str):
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.now() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
