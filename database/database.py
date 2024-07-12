@@ -1,10 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from core.config import settings
 
-# SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"  # For SQLite
-# SQLALCHEMY_DATABASE_URL = "postgresql://user:password@localhost/dbname"  # For PostgreSQL
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:abood@2009@localhost/NuvisionDB"  # For PostgreSQL
+SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
 
 engine = create_engine(

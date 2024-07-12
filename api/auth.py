@@ -22,11 +22,8 @@ router = APIRouter()
 fake_users_db = {
     "user@example.com": {
         "username": "user@example.com",
-        #"full_name": "User Example",
         "email": "user@example.com",
         "hashed_password": "$2b$12$rAPM7zUJBkgrdrPHQZGnsOEbSccuia9oMcWwS7PVk/0ks5tQS3I/2",  # hashed version of "password"
-        #"hashed_password": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",  # hashed version of "password"
-
     }
 }
 
