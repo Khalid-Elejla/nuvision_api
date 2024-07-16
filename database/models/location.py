@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from database.database import Base
+from .data_source import DataSource
 
 class Location(Base):
     __tablename__ = "locations"

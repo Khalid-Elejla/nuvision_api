@@ -6,3 +6,4 @@ sqlalchemy
 psycopg2-binary #sqlite if you want to use sqlite as your db
 python-dotenv
 pydantic-settings
+alembic
