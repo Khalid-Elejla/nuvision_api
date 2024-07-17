@@ -9,55 +9,30 @@ from .config import settings
 from database.database import get_db
 from schemas.user import User
 from crud import crud_user
+import logging
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
-####################################################
-# remove
-# Mock database for demonstration
-current_datetime = datetime.now()
-created_at = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
-updated_at = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
-fake_users_db = {
-    "user@example.com": {
-        "id":1,
-        "created_at":created_at,
-        "updated_at": updated_at,
-        "username": "user@example.com",
-        "email": "user@example.com",
-        "hashed_password": "$2b$12$rAPM7zUJBkgrdrPHQZGnsOEbSccuia9oMcWwS7PVk/0ks5tQS3I/2",  # hashed version of "password"
-    }
-}
-######################################################
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
-
-##################################################
-#remove
-# # Load environment variables
-# load_dotenv()
-
-# SECRET_KEY = os.getenv("SECRET_KEY")
-# ALGORITHM = os.getenv("ALGORITHM")
-# ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
-
-#########################################################
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/login")
 
 def get_password_hash(password):
     return pwd_context.hash(password)
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
-
+       
 def authenticate_user(db: Session, username: str, password: str):
+    print(username)
     user = crud_user.get_user_by_username(db, username=username)
     if not user:
-        return False
+        raise HTTPException(status_code=401, detail="Incorrect username1 or password")
     if not verify_password(password, user.hashed_password):
-        return False
+        raise HTTPException(status_code=401, detail="Incorrect username or password1")
     return user
+
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -71,7 +46,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 async def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
+        status_code=401,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
@@ -84,5 +59,6 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
         raise credentials_exception
     user = crud_user.get_user_by_username(db, username=username)
     if user is None:
+        print("exceptttttt222")
         raise credentials_exception
     return user
