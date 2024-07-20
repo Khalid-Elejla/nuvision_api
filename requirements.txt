@@ -1,7 +1,7 @@
 fastapi
 python-jose
-bcrypt==4.1.2
-passlib[bcrypt]==1.7.4
+passlib
+bcrypt
 sqlalchemy
 psycopg2-binary #sqlite if you want to use sqlite as your db
 python-dotenv
