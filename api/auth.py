@@ -6,7 +6,6 @@ from schemas.token import Token
 from schemas.user import UserCreate, User
 from crud import crud_user
 from core.security import authenticate_user, create_access_token, get_current_user
-from datetime import timedelta
 
 router = APIRouter()
 

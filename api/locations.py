@@ -1,48 +1,77 @@
-# from fastapi import APIRouter, Depends, HTTPException
-# from typing import List
-# from database.models.location import Location
-# from database.models.user import User
-# from .auth import get_current_user
+# locations.py or your FastAPI router file for locations
+from core.security import get_current_user
+from crud import crud_location, crud_project
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+from database.database import get_db  # Adjust import paths as necessary
+from schemas.location import LocationCreate, LocationUpdate, Location
+from schemas.user import User
 
-# router = APIRouter()
+router = APIRouter()
 
-# # Mock database for demonstration
-# locations_db = []
 
-# # Create location endpoint
-# @router.post("/locations/", response_model=Location)
-# async def create_location(location: Location, current_user: User = Depends(get_current_user)):
-#     # Create location logic (e.g., save to database)
-#     locations_db.append(location)
-#     return location
+# Create location endpoint
+@router.post("/projects/{project_id}/locations/", response_model=Location)
+async def create_location(
+    project_id: int,
+    location: LocationCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Ensure the current user owns the project
+    project = crud_project.get_project(db, project_id=project_id)
+    if not project or project.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to create locations for this project")
 
-# # Get all locations endpoint
-# @router.get("/locations/", response_model=List[Location])
-# async def read_locations(current_user: User = Depends(get_current_user)):
-#     return locations_db
+    location.project_id = project_id  # Set the project_id in the location object
+    return crud_location.create_location(db=db, location=location, user_id=current_user.id)
 
-# # Get location by ID endpoint
-# @router.get("/locations/{location_id}", response_model=Location)
-# async def read_location(location_id: int, current_user: User = Depends(get_current_user)):
-#     location = next((l for l in locations_db if l.id == location_id), None)
-#     if location is None:
-#         raise HTTPException(status_code=404, detail="Location not found")
-#     return location
 
-# # Update location endpoint
-# @router.put("/locations/{location_id}", response_model=Location)
-# async def update_location(location_id: int, location: Location, current_user: User = Depends(get_current_user)):
-#     # Update location logic (e.g., update in database)
-#     index = next((i for i, l in enumerate(locations_db) if l.id == location_id), None)
-#     if index is None:
-#         raise HTTPException(status_code=404, detail="Location not found")
-#     locations_db[index] = location
-#     return location
+# Get all locations for a project
+@router.get("/projects/{project_id}/locations", response_model=List[Location])
+async def get_locations_by_project(
+    project_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    return crud_location.get_locations(db, project_id)
 
-# # Delete location endpoint
-# @router.delete("/locations/{location_id}")
-# async def delete_location(location_id: int, current_user: User = Depends(get_current_user)):
-#     # Delete location logic (e.g., delete from database)
-#     global locations_db
-#     locations_db = [l for l in locations_db if l.id != location_id]
-#     return {"message": "Location deleted successfully"}
+# Get location by ID endpoint
+@router.get("/locations/{location_id}", response_model=Location)
+async def read_location(
+    location_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    location = crud_location.get_location(db, location_id)
+    if location is None:
+        raise HTTPException(status_code=404, detail="Location not found")
+    return location
+
+# Update location endpoint
+@router.patch("/locations/{location_id}", response_model=Location)
+async def update_location(
+    location_id: int,
+    location_update: LocationUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    updated_location = crud_location.update_location(db, location_id, location_update)
+    
+    if updated_location is None:
+        raise HTTPException(status_code=404, detail="Location not found")
+    return updated_location
+
+##
+# Delete location endpoint
+@router.delete("/locations/{location_id}", response_model=Location)
+async def delete_location(
+    location_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    deleted_location = crud_location.delete_location(db, location_id)
+    if deleted_location is None:
+        raise HTTPException(status_code=404, detail="Location not found")
+    return deleted_location

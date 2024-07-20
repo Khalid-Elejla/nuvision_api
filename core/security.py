@@ -9,7 +9,6 @@ from .config import settings
 from database.database import get_db
 from schemas.user import User
 from crud import crud_user
-import logging
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -59,6 +58,5 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
         raise credentials_exception
     user = crud_user.get_user_by_username(db, username=username)
     if user is None:
-        print("exceptttttt222")
         raise credentials_exception
     return user

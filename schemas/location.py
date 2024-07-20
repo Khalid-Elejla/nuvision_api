@@ -9,8 +9,14 @@ class LocationBase(BaseModel):
     longitude: Optional[float]=None
 
 class LocationCreate(LocationBase):
-    pass
+    project_id: int
 
+class LocationUpdate(BaseModel):
+    name: Optional[str]=None
+    description: Optional[str]=None
+    latitude: Optional[float]=None
+    longitude: Optional[float]=None
+    
 class Location(LocationBase):
     id: int
     project_id: int

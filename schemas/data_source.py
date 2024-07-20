@@ -11,13 +11,14 @@ class DataSourceBase(BaseModel):
     
 
 class DataSourceCreate(DataSourceBase):
-    pass
+    location_id: int
 
-# class DataSourceUpdate(BaseModel):
-#     name: Optional[str] = None
-#     description: Optional[str] = None
-#     source_type: Optional[str] = None
-#     source_url: Optional[str] = None
+
+class DataSourceUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    source_type: Optional[str] = None
+    source_url: Optional[str] = None
 
 class DataSource(DataSourceBase):
     id: int

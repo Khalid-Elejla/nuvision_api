@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from database.models.project import Project
-from schemas.project import ProjectCreate, Project as ProjectSchema
+from schemas.project import ProjectCreate, Project as ProjectSchema, ProjectUpdate
 from datetime import datetime
 
 def get_projects(db: Session, user_id: int):
@@ -30,6 +30,21 @@ def update_project(db: Session, project_id: int, project: ProjectCreate):
         db_project.updated_at = datetime.now()
         db.commit()
         db.refresh(db_project)
+    else:
+        return None
+    return db_project
+
+def patch_project(db: Session, project_id: int, project_update: ProjectUpdate):
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    if not db_project:
+        return None
+    update_data = project_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_project, key, value)
+    db_project.updated_at = datetime.now()
+    db.commit()
+    db.refresh(db_project)
+    
     return db_project
 
 def delete_project(db: Session, project_id: int):
@@ -37,4 +52,6 @@ def delete_project(db: Session, project_id: int):
     if db_project:
         db.delete(db_project)
         db.commit()
+    else:
+        return None
     return db_project
